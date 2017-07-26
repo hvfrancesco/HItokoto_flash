@@ -1,12 +1,16 @@
 <html>
   <head>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
     {% if title %}
-    <title>{{ title }} - microblog</title>
+    <title>{{ title }} - Hitokoto Flash</title>
     {% else %}
-    <title>microblog</title>
+    <title>Hitokoto Flash</title>
     {% endif %}
   </head>
   <body>
+      <div id="contenitore" class="container">
       <div id='message'>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -18,6 +22,12 @@
       {% endif %}
     {% endwith %}
     </div>
+    <div id="logo">
+    <img src="/static/img/logo.png" />
+    </div>
+    <div id=blocco">
     {% block content %}{% endblock %}
+    </div>
+    </div>
   </body>
 </html>
