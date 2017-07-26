@@ -2,11 +2,13 @@ import threading
 import time
 import pygame
 from pygame.locals import *
-
+import os
+from .plot import plotter_virtuale
 
 class Concur(threading.Thread):
     def __init__(self,q):
         self.q = q
+        self.p = plotter_virtuale() # do sostituire con plotter reale
         threading.Thread.__init__(self)
         self.iterations = 0
         self.daemon = True  # OK for main to exit even if instance is still running
@@ -22,19 +24,26 @@ class Concur(threading.Thread):
                     self.state.wait() # block until notified
             # do stuff, qui inserire gestione coda e plotter
             time.sleep(.1)
-            self.iterations += 1
-            print self.iterations
+            #self.iterations += 1
+            #print self.iterations
             if not self.q.empty():
-                print self.q.get()
+                storia = self.q.get()
+                y = 0
+                for linea in storia[1].split(os.linesep):
+                    self.p.scrivi_linea(linea, y)
+                    y += 1
+                self.p.mostra_foglio()
 
     def resume(self):
         with self.state:
             self.paused = False
             self.state.notify()  # unblock self if waiting
+            print "attivo"
 
     def pause(self):
         with self.state:
             self.paused = True  # make self block and wait
+            print "in pausa"
 
 
 class Controller(threading.Thread):
@@ -49,7 +58,7 @@ class Controller(threading.Thread):
         self.img_off = pygame.image.load('hito_off.png')
         self.white = (255, 255, 255)
         pygame.init()
-        self.screen = pygame.display.set_mode((480, 200))
+        self.screen = pygame.display.set_mode((480, 400))
         self.screen.fill((self.white))
         self.screen.blit(self.img_on, (0,0))
         pygame.display.set_caption('Hitokoto')
@@ -71,23 +80,19 @@ class Controller(threading.Thread):
                     self.img = self.img_off
                 self.screen.blit(self.img,(0,0))
                 pygame.display.flip()
-                print "culo!"
                 time.sleep(.1)
                 for event in pygame.event.get():
                     if (event.type == KEYDOWN):
 		                if (event.key == pygame.K_q):
 			                self.vai = False
 			                break
-		                print "key pressed"
 		                time.sleep(0.1)
 		                self.condition = not self.condition
-		                print self.condition
 		                if self.condition:
 			                self.concur.resume()
 		                else:
 			                self.concur.pause()
 			
-            print('concur.iterations == {}'.format(self.concur.iterations))  # show thread executed
 
 
     def resume(self):
