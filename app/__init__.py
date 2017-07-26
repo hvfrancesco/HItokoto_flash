@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 import time
 import Queue
 from app.bot import Concur
@@ -8,8 +9,9 @@ from app.bot import Controller
 
 app = Flask(__name__)
 app.config.from_object('config')
-from app import views
+db = SQLAlchemy(app)
 
+from app import views, models
 
 q = Queue.Queue() # si istanzia la coda che servirà a inserire le storie
 views.q = q # passiamo l'oggetto coda alle views importate
