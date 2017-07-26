@@ -24,8 +24,6 @@ class Concur(threading.Thread):
                     self.state.wait() # block until notified
             # do stuff, qui inserire gestione coda e plotter
             time.sleep(.1)
-            #self.iterations += 1
-            #print self.iterations
             if not self.q.empty():
                 storia = self.q.get()
                 y = 0
@@ -83,16 +81,16 @@ class Controller(threading.Thread):
                 time.sleep(.1)
                 for event in pygame.event.get():
                     if (event.type == KEYDOWN):
-		                if (event.key == pygame.K_q):
-			                self.vai = False
-			                break
-		                time.sleep(0.1)
-		                self.condition = not self.condition
-		                if self.condition:
-			                self.concur.resume()
-		                else:
-			                self.concur.pause()
-			
+                        if (event.key == pygame.K_q):
+                            self.vai = False
+                            os._exit(0)
+                            break
+                        time.sleep(0.1)
+                        self.condition = not self.condition
+                        if self.condition:
+                            self.concur.resume()
+                        else:
+                            self.concur.pause()
 
 
     def resume(self):
