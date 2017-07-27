@@ -4,6 +4,7 @@ import pygame
 from pygame.locals import *
 import os
 from .plot import plotter_virtuale
+import random
 
 class Concur(threading.Thread):
     def __init__(self,q):
@@ -26,10 +27,7 @@ class Concur(threading.Thread):
             time.sleep(.1)
             if not self.q.empty():
                 storia = self.q.get()
-                y = 0
-                for linea in storia[1].split(os.linesep):
-                    self.p.scrivi_linea(linea, y)
-                    y += 1
+                self.p.scrivi(storia[1])
                 self.p.mostra_foglio()
 
     def resume(self):
