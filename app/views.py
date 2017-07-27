@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect
 from app import app, db, models
 from .forms import submitStory
+import datetime
 
 
 
@@ -18,7 +19,12 @@ def invia_storia():
     form = submitStory()
     if form.validate_on_submit():
         flash('storia inviata da %s' % form.autore.data)
-        s = models.Storia(autore=form.autore.data, storia=form.storia.data)
+        u = models.Autore.query.filter_by(nome = form.autore.data).first()
+        if (not u):
+            u = models.Autore(nome=form.autore.data)
+            db.session.add(u)
+            db.session.commit()
+        s = models.Storia(body=form.storia.data, timestamp=datetime.datetime.utcnow(), autore=u)
         db.session.add(s)
         db.session.commit()
         flash(form.storia.data)
