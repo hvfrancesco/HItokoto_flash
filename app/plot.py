@@ -2,6 +2,7 @@
 
 from chiplotle import *
 from chiplotle.tools.plottertools import instantiate_virtual_plotter
+from chiplotle.geometry.core.coordinate import Coordinate
 import ttfquery
 from ttfquery import describe
 from ttfquery import glyph
@@ -14,16 +15,20 @@ import time
 
 class plotter():
     def __init__(self):
-        self.p = instantiate_virtual_plotter(type="HP7576A")
+        self.dim_foglio = Coordinate(33640,23760) # A1 - temporaneo
+        self.p = instantiate_virtual_plotter(right_top = self.dim_foglio, type="HP7576A")
         # self.p = instantiate_plotters( )[0] # plotter reale
         self.p.margins.hard.draw_outline() # da rimuovere con plotter reale
-        self.dimensioni_carattere = 0.1
+        self.dimensioni_carattere = 0.3
+        self.altezza_carattere = self.dimensioni_carattere*2
+        self.fattore_interlinea = 1.4
+        self.interlinea = self.altezza_carattere*400*self.fattore_interlinea
         self.n_caratteri = 40
         self.w_colonna = self.dimensioni_carattere*self.n_caratteri*400*1.6
         self.titolo = "HITOKOTO Flash"
-        self.dimensioni_titolo = 0.2
-        self.panning_titolo = 100
-        self.altezza_banda_titolo = (self.dimensioni_titolo*1000)+self.panning_titolo+50
+        self.dimensioni_titolo = 0.8
+        self.panning_titolo = 200
+        self.altezza_banda_titolo = (self.dimensioni_titolo*1000)+self.panning_titolo*2
         self.numero_foglio = 1
         self.stampa_titolo()
 
@@ -33,12 +38,11 @@ class plotter():
        dx = 0
        linee = []
        for linea in textwrap.wrap(testo,self.n_caratteri, replace_whitespace=False):
-       #for linea in testo.split(os.linesep):
            linea = self.rimpiazza_accenti(linea)
            linea = linea.encode('latin1','replace')
-           s = shapes.label(linea, self.dimensioni_carattere, self.dimensioni_carattere*2)
+           s = shapes.label(linea, self.dimensioni_carattere, self.altezza_carattere)
            transforms.rotate(s, pi/2)
-           transforms.offset(s, (x+100*dx,y))
+           transforms.offset(s, (x+self.interlinea*dx,y))
            dx += 1
            linee.append(s)
        blocco = shapes.group(linee)
@@ -77,7 +81,7 @@ class plotter():
     def stampa_titolo(self):
         s = shapes.label(self.titolo + " | " + time.strftime("%d/%m/%Y") + " | " + "#" + str(self.numero_foglio), self.dimensioni_titolo, self.dimensioni_titolo*2)
         transforms.rotate(s, pi/2)
-        transforms.offset(s, ((self.dimensioni_titolo*1000)+self.panning_titolo,100))
+        transforms.offset(s, ((self.dimensioni_titolo*1000)+self.panning_titolo,self.panning_titolo*2))
         self.p.write(s)
         s = shapes.line((self.altezza_banda_titolo,100),(self.altezza_banda_titolo,self.p.margins.soft.top-100))
         self.p.write(s)
