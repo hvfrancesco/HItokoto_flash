@@ -3,15 +3,18 @@ import time
 import pygame
 from pygame.locals import *
 import os
-from .plot import plotter_virtuale
+from .plot import plotter
 
 
-class Concur(threading.Thread):
+class Worker(threading.Thread):
     def __init__(self,q):
         self.q = q
-        self.p = plotter_virtuale() # da sostituire con plotter reale
+        self.p = plotter()
         threading.Thread.__init__(self)
-        self.messaggio = ""
+        self.messaggio = "Premi un tasto per mettere il plotter in pausa e farlo ripartire\n"
+        self.messaggio += "Premi 'q' per uscire\n"
+        self.messaggio += "premi 'p' per visualizzare il plotter virtuale\n"
+        self.messaggio += "premi 's' per stampare il titolo su un nuovo foglio"
         self.daemon = True  # OK for main to exit even if instance is still running
         self.paused = True  # start out paused
         self.state = threading.Condition()
@@ -28,7 +31,7 @@ class Concur(threading.Thread):
             if not self.q.empty():
                 storia = self.q.get()
                 self.p.scrivi(storia[1])
-                self.messaggio = "storia ricevuta da: "+storia[0]+'\n'+storia[1]
+                self.messaggio = "storia ricevuta da: "+storia[0]+'\n'+storia[1] # messaggio da mostrare nella finestra controllo
                 #self.p.mostra_foglio() # solo per debug con plotter virtuale
 
     def resume(self):
@@ -44,8 +47,8 @@ class Concur(threading.Thread):
 
 
 class Controller(threading.Thread):
-    def __init__(self, concur):
-        self.concur = concur
+    def __init__(self, worker):
+        self.worker = worker
         threading.Thread.__init__(self)
         self.daemon = True  # OK for main to exit even if instance is still running
         self.paused = True  # start out paused
@@ -59,10 +62,11 @@ class Controller(threading.Thread):
         self.guifont_name = 'static/fonts/Roboto-Light.ttf'
         self.guifont_url = os.path.join(os.path.dirname(__file__),self.guifont_name)
         self.guifont = pygame.font.Font(self.guifont_url,11)
-        self.screen = pygame.display.set_mode((480, 400))
+        self.screen = pygame.display.set_mode((480, 600))
         self.screen.fill((self.white))
         self.screen.blit(self.img_on, (0,0))
-        self.pygame_text = self.guifont.render(self.concur.messaggio, True, (0, 0, 0))
+        #self.pygame_text = self.guifont.render(self.worker.messaggio, True, (0, 0, 0))
+        self.pygame_text = self.multiLineSurface(self.worker.messaggio, self.guifont, pygame.Rect(10,200,460,500), (0,0,0), (255,255,255))
         self.screen.blit(self.pygame_text,(10,220))
         pygame.display.set_caption('Hitokoto')
         pygame.mouse.set_visible(0)
@@ -82,7 +86,8 @@ class Controller(threading.Thread):
                 else:
                     self.img = self.img_off
                 self.screen.blit(self.img,(0,0))
-                self.pygame_text = self.guifont.render(self.concur.messaggio, True, (0, 0, 0))
+                #self.pygame_text = self.guifont.render(self.worker.messaggio, True, (0, 0, 0))
+                self.pygame_text = self.multiLineSurface(self.worker.messaggio, self.guifont, pygame.Rect(10,200,460,500), (0,0,0), (255,255,255))
                 self.screen.blit(self.pygame_text,(10,220))
                 pygame.display.flip()
                 time.sleep(.1)
@@ -93,14 +98,19 @@ class Controller(threading.Thread):
                             os._exit(0)
                             break
                         elif (event.key == pygame.K_p):
-                            self.concur.p.mostra_foglio()
+                            self.worker.p.mostra_foglio()
+                            self.worker.messaggio = "Mostro il foglio del plotter virtuale" 
+                        elif (event.key == pygame.K_s):
+                            self.worker.p.numero_foglio += 1 # stampa il titolo su un nuovo foglio
+                            self.worker.p.stampa_titolo() # con un numero progressivo
+                            self.worker.messaggio = "Ho stampato il titolo su un nuovo foglio"
                         else:
                             time.sleep(0.1)
                             self.condition = not self.condition
                             if self.condition:
-                                self.concur.resume()
+                                self.worker.resume()
                             else:
-                                self.concur.pause()
+                                self.worker.pause()
 
 
     def resume(self):
@@ -122,7 +132,7 @@ class Controller(threading.Thread):
             return self.message
 
 
-    def multiLineSurface(string, font, rect, fontColour, BGColour, justification=0):
+    def multiLineSurface(self, string, font, rect, fontColour, BGColour, justification=0):
         """Returns a surface containing the passed text string, reformatted
         to fit within the given rect, word-wrapping as necessary. The text
         will be anti-aliased.
@@ -155,7 +165,7 @@ class Controller(threading.Thread):
                 # if any of our words are too long to fit, return.
                 for word in words:
                     if font.size(word)[0] >= rect.width:
-                        raise TextRectException("The word " + word + " is too long to fit in the rect passed.")
+                        raise self.TextRectException("The word " + word + " is too long to fit in the rect passed.")
                 # Start a new line
                 accumulatedLine = ""
                 for word in words:
@@ -175,8 +185,8 @@ class Controller(threading.Thread):
         surface.fill(BGColour)
         accumulatedHeight = 0
         for line in finalLines:
-            if accumulatedHeight + font.size(line)[1] >= rect.height:
-                raise TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
+            #if accumulatedHeight + font.size(line)[1] >= rect.height:
+                #raise self.TextRectException("Once word-wrapped, the text string was too tall to fit in the rect.")
             if line != "":
                 tempSurface = font.render(line, 1, fontColour)
             if justification == 0:
@@ -186,6 +196,6 @@ class Controller(threading.Thread):
             elif justification == 2:
                 surface.blit(tempSurface, (rect.width - tempSurface.get_width(), accumulatedHeight))
             else:
-                raise TextRectException("Invalid justification argument: " + str(justification))
-        accumulatedHeight += font.size(line)[1]
+                raise self.TextRectException("Invalid justification argument: " + str(justification))
+            accumulatedHeight += font.size(line)[1]
         return surface
