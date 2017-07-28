@@ -1,7 +1,7 @@
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
 
-class submitStory(Form):
+class submitStory(FlaskForm):
     autore = StringField('autore', validators=[DataRequired()])
     storia = TextAreaField('storia', validators=[DataRequired()])

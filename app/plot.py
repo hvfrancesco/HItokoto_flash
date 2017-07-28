@@ -51,7 +51,7 @@ class plotter_virtuale():
        self.p.write(s)
        
     def rimpiazza_accenti(self, s):
-		c = [(u'\xe0',"e'"),(u'\xe8',"e'"),(u'\xe9',"e'"),(u'\xec',"i'"),(u'\xf2',"o'"),(u'\xf9',"u'")]
+		c = [(u'\xe0',"a'"),(u'\xe8',"e'"),(u'\xe9',"e'"),(u'\xec',"i'"),(u'\xf2',"o'"),(u'\xf9',"u'")]
 		for i in c:
 			s = s.replace(i[0],i[1])
 		return s
