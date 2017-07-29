@@ -3,15 +3,25 @@
 
 {% block content %}
   <h1>Invia la tua storia</h1>
-  <form class="form-horizontal" action="" method="post" name="login">
-      {{ form.hidden_tag() }}
-      <p>
-          Nome:<br />
-          {{ form.autore(size=80) }}<br />
-      </p>
-      <p> Storia:<br />
-          {{ form.storia(cols="80", rows="25")}}<br />
-    </p>
-      <p><input type="submit" value="Invia"></p>
+  <div id="form_storia" class="col-md-7">
+  <form action="" method="post" name="login">
+    <div class="form-group">  
+    {{ form.hidden_tag() }}
+    </div>
+    <div class="form-group {% if form.autore.errors %} has-error {% endif %}">
+         <label for="autore">* autore:</label>
+         <input type="text" class="form-control" id="autore" name="autore" placeholder="il tuo nome">
+         <p class="help-block">{{ form.autore.errors[0] }}</p>
+    </div>
+    <div class="form-group {% if form.storia.errors %} has-error {% endif %}">
+        <label for="storia">* storia</label>
+        <textarea cols="80" rows="25" class="form-control" id="storia" name="storia" placeholder="scrivi qui la tua storia"></textarea>
+        <p class="help-block">{{ form.storia.errors[0] }}</p>
+    </div>
+    <div class="form-group">    
+      <button type="submit" class="btn btn-primary">invia</button>
+    </div>
   </form>
+  </div>
+  
 {% endblock %}

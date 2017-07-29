@@ -21,5 +21,5 @@ worker = Worker(q)
 # questo thread invece controlla il precedente per fermarlo e farlo ripartire
 # tramite una finestra pyGame, in modo da mettere in pausa la stampa
 controller = Controller(worker)
-worker.start() # chiama il metodo run() di concur
+worker.start() # chiama il metodo run() di worker
 controller.start() # chiama il metodo run() di controller
