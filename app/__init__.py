@@ -6,12 +6,18 @@ import time
 import Queue
 from app.bot import Worker
 from app.bot import Controller
+import flask_restless
 
 app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
 from app import views, models
+manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
+# Create API endpoints, which will be available at /api/<tablename> by
+# default. Allowed HTTP methods can be specified as well.
+manager.create_api(models.Autore, methods=['GET', 'POST', 'DELETE'])
+manager.create_api(models.Storia, methods=['GET'])
 
 q = Queue.Queue() # si istanzia la coda che servirà a inserire le storie
 views.q = q # passiamo l'oggetto coda alle views importate
