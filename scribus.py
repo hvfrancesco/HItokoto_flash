@@ -36,39 +36,48 @@ def main(argv):
     scribus.setRedraw(False)
 
     nome_x = 60
-    nome_y = 45
+    nome_y = 39
     nome_w = 74
-    nome_h = 10
+    nome_h = 6
+
+    titolo_x = 60
+    titolo_y = 46
+    titolo_w = 74
+    titolo_h = 10
 
     testo_x = 14
     testo_y = 62
     testo_w = 120
-    testo_h = 133
+    testo_h = 134
 
     i=0
 
-
-    storie = []
     for o in oggetti:
-        b = o['body']
-        a = o['autore']['nome']
-        t = o['timestamp']
-        s = {'autore':a, 'timestamp':t, 'testo':b}
-        storie.append(s)
+        scribus.newPage(-1)
         scribus.newPage(-1)
         textbox = scribus.createText(nome_x, nome_y, nome_w, nome_h)
         scribus.insertText(o['autore']['nome'],0,textbox)
         scribus.setTextColor('Black',textbox)
-        scribus.setFont('Nimbus Sans L Bold', textbox)
+        scribus.setTextAlignment(scribus.ALIGN_RIGHT, textbox)
+        scribus.setFont('Myriad Pro Bold', textbox)
         scribus.setFontSize(14, textbox)
         scribus.setLineSpacing(16, textbox)
+        if o['titolo'] != "":
+            textbox = scribus.createText(titolo_x, titolo_y, titolo_w, titolo_h)
+            scribus.insertText(o['titolo'],0,textbox)
+            scribus.setTextColor('Black',textbox)
+            scribus.setTextAlignment(scribus.ALIGN_RIGHT, textbox)
+            scribus.setFont('Myriad Pro Italic', textbox)
+            scribus.setFontSize(14, textbox)
+            scribus.setLineSpacing(16, textbox)
         textbox = scribus.createText(testo_x, testo_y, testo_w, testo_h)
         scribus.insertText(o['body'],0,textbox)
         scribus.setTextColor('Black',textbox)
+        scribus.setTextAlignment(scribus.ALIGN_BLOCK, textbox)
         scribus.setFont('Apple Garamond Regular', textbox)
         scribus.setFontSize(11, textbox)
         scribus.setLineSpacing(14, textbox)
-        scribus.newPage(-1)
+        
         i += 1
         scribus.progressSet(i)
 
@@ -77,7 +86,6 @@ def main(argv):
     scribus.docChanged(True)
     scribus.statusMessage("fatto")
     scribus.setRedraw(True)
-    print storie
 
 def main_wrapper(argv):
     """The main_wrapper() function disables redrawing, sets a sensible generic

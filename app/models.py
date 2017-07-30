@@ -10,6 +10,7 @@ class Autore(db.Model):
 
 class Storia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    titolo = db.Column(db.String(64), index=True)
     body = db.Column(db.String(10000), index=True)
     timestamp = db.Column(db.DateTime)
     auth_id = db.Column(db.Integer, db.ForeignKey('autore.id'))

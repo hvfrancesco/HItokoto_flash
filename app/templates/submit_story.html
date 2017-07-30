@@ -13,6 +13,11 @@
          <input type="text" class="form-control" id="autore" name="autore" placeholder="il tuo nome">
          <p class="help-block">{{ form.autore.errors[0] }}</p>
     </div>
+    <div class="form-group {% if form.titolo.errors %} has-error {% endif %}">
+         <label for="titolo">titolo:</label>
+         <input type="text" class="form-control" id="titolo" name="titolo" placeholder="puoi indicare un titolo per la storia">
+         <p class="help-block">{{ form.titolo.errors[0] }}</p>
+    </div>
     <div class="form-group {% if form.storia.errors %} has-error {% endif %}">
         <label for="storia">* storia</label>
         <textarea cols="80" rows="25" class="form-control" id="storia" name="storia" placeholder="scrivi qui la tua storia"></textarea>
