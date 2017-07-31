@@ -24,7 +24,7 @@ def invia_storia():
             u = models.Autore(nome=form.autore.data)
             db.session.add(u)
             db.session.commit()
-        s = models.Storia(body=form.storia.data, titolo=form.titolo.data, timestamp=datetime.datetime.utcnow(), autore=u)
+        s = models.Storia(body=form.storia.data, titolo=form.titolo.data, timestamp=datetime.datetime.now(), autore=u)
         db.session.add(s)
         db.session.commit()
         if form.titolo.data != "":
