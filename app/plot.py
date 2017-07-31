@@ -3,6 +3,8 @@
 from chiplotle import *
 from chiplotle.tools.plottertools import instantiate_virtual_plotter
 from chiplotle.geometry.core.coordinate import Coordinate
+from chiplotle.tools.io.export import export
+from chiplotle.tools.io._open_file import _open_file
 import ttfquery
 from ttfquery import describe
 from ttfquery import glyph
@@ -76,7 +78,9 @@ class plotter():
 
 
     def mostra_foglio(self):
-        io.view(self.p)
+        #io.view(self.p)
+        imgfile = export(self.p, 'hitokoto_tmp', 'eps')
+        _open_file(imgfile)
 
     def stampa_titolo(self):
         s = shapes.label(self.titolo + " | " + time.strftime("%d/%m/%Y") + " | " + "#" + str(self.numero_foglio), self.dimensioni_titolo, self.dimensioni_titolo*2)
