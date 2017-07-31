@@ -140,9 +140,9 @@ def main(argv):
         i += 1
         scribus.progressSet(i)
 
-
-    for p in range(4-(scribus.pageCount()%4)):
-        scribus.newPage(-1)
+    if scribus.pageCount()%4 != 0:
+        for p in range(4-(scribus.pageCount()%4)):
+            scribus.newPage(-1)
     
     # prima pagina
     response = requests.get(url_autore, headers=headers)
@@ -186,8 +186,14 @@ def main(argv):
     scribus.statusMessage("fatto")
     scribus.setRedraw(True)
 
+    scribus.saveDocAs("hitokoto_temp.sla")
+
     nome_pdf = "libro_a5.pdf"
-    pdf = scribus.PDFfile(outdst=1,version=15, file = nome_pdf, fonts=('Myriad Pro Italic','Apple Garamond Regular', 'Myriad Pro Bold', 'Myriad Pro Italic'))
+    pdf = scribus.PDFfile()
+    pdf.outdst = 1
+    pdf.version = 15
+    pdf.file = nome_pdf
+    pdf.fonts = ['Myriad Pro Italic','Apple Garamond Regular', 'Myriad Pro Bold', 'Myriad Pro Italic']
     pdf.save()
 
     os.system("./prepara_pdf.sh " + nome_pdf)

@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect
 from app import app, db, models
 from .forms import submitStory
 import datetime
-
+import os
 
 
 q = None
@@ -27,9 +27,11 @@ def invia_storia():
         s = models.Storia(body=form.storia.data, titolo=form.titolo.data, timestamp=datetime.datetime.now(), autore=u)
         db.session.add(s)
         db.session.commit()
+        # aggiunge un messaggio alla coda messaggi
         if form.titolo.data != "":
             flash(form.titolo.data)
         flash(form.storia.data)
+        # mette i dati della storia in coda per il plottaggio
         q.put((form.autore.data,form.storia.data))
         nick = form.autore.data
         return redirect('/index')

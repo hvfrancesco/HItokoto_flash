@@ -5,9 +5,41 @@ from pygame.locals import *
 import os
 from .plot import plotter
 
+class Scribus(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.daemon = True  # OK for main to exit even if instance is still running
+        self.paused = True  # start out paused
+        self.state = threading.Condition()
+
+    def run(self):
+        while True:
+            with self.state:
+                if self.paused:
+                    self.state.wait() # block until notified
+            # do stuff, qui inserire gestione coda e plotter
+            time.sleep(.1)
+            # prova a produrre un pdf fresco ogni volta che si aggiunge una storia
+            try:
+                os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
+            except  OSError as e:
+                if e.errno == os.errno.ENOENT:
+                    pass
+            self.pause()
+            
+    def resume(self):
+        with self.state:
+            self.paused = False
+            self.state.notify()  # unblock self if waiting
+
+    def pause(self):
+        with self.state:
+            self.paused = True  # make self block and wait
+
 
 class Worker(threading.Thread):
     def __init__(self,q):
+        self.auto_pdf = True
         self.q = q
         self.p = plotter()
         threading.Thread.__init__(self)
@@ -19,6 +51,8 @@ class Worker(threading.Thread):
         self.paused = True  # start out paused
         self.state = threading.Condition()
         # da aggiungere: istanziare e far partire l'oggetto plot
+        self.scribus = Scribus()
+        self.scribus.start() # parte in pausa
 
     def run(self):
         self.resume() # unpause self
@@ -29,6 +63,14 @@ class Worker(threading.Thread):
             # do stuff, qui inserire gestione coda e plotter
             time.sleep(.1)
             if not self.q.empty():
+                # prova a produrre un pdf fresco ogni volta che si aggiunge una storia
+                #try:
+                #    os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
+                #except  OSError as e:
+                #    if e.errno == os.errno.ENOENT:
+                #        pass
+                if self.auto_pdf:
+                    self.scribus.resume() # se auto_pdf impostato, produce nuovo libro pdf ad ogni nuova storia
                 storia = self.q.get()
                 self.p.scrivi(storia[1])
                 self.messaggio = "storia ricevuta da: "+storia[0]+'\n'+storia[1] # messaggio da mostrare nella finestra controllo
@@ -103,6 +145,18 @@ class Controller(threading.Thread):
                             self.worker.p.numero_foglio += 1 # stampa il titolo su un nuovo foglio
                             self.worker.p.stampa_titolo() # con un numero progressivo
                             self.worker.messaggio = "Ho stampato il titolo su un nuovo foglio"
+                        elif (event.key == pygame.K_b):
+                            try:
+                                os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
+                            except  OSError as e:
+                                if e.errno == os.errno.ENOENT:
+                                    pass
+                        elif (event.key == pygame.K_a):
+                            self.worker.auto_pdf = not self.worker.auto_pdf
+                            if self.worker.auto_pdf:
+                                self.worker.messaggio = "auto PDF abilitato"
+                            else:
+                                self.worker.messaggio = "auto PDF disabilitato"
                         else:
                             time.sleep(0.1)
                             self.condition = not self.condition
