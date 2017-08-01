@@ -59,7 +59,10 @@ class plotter():
            transforms.offset(blocco,(0,off))
        if (tr_x > m_right):
            off = m_right-tr_x
-           transforms.offset(blocco,(off-120,0)) 
+           transforms.offset(blocco,(off-120,0))
+       if (blocco.bottom_left.x < self.altezza_banda_titolo):
+           off = self.altezza_banda_titolo - blocco.bottom_left.x
+           transforms.offset(blocco,(off+120,0))
        self.p.write(blocco)
     
     '''
