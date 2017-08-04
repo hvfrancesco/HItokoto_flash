@@ -1,7 +1,7 @@
-Dear User,
+Caro utente,
 
 {% block message %}
 {% endblock %}
 
-Sincerely,
+Cordialmente,
 {{ app_name }}

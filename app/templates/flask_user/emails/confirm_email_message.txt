@@ -1,10 +1,10 @@
 {% extends 'flask_user/emails/base_message.txt' %}
 
 {% block message %}
-You will need to confirm your email to start using {{ app_name }}.
+Devi confermare la tua email per iniziare ad usare {{ app_name }}.
 
-If you initiated this registration, please visit the link below:
+Per confermare la tua email, per favore clicca sul link seguente:
     {{ confirm_email_link }}
 
-If you did not initiate this registration, you may safely ignore this email.
+Se non hai richiesto tu l'iscrizione, ignora semplicemente questo messaggio..
 {% endblock %}
