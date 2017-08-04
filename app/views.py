@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect
 from app import app, db, models
-from flask_user import login_required
+from flask_user import login_required, current_user
+
 from .forms import submitStory
 import datetime
 import os
@@ -23,7 +24,11 @@ def invia_storia():
         flash('storia inviata da %s' % form.autore.data)
         u = models.Autore.query.filter_by(nome = form.autore.data).first()
         if (not u):
-            u = models.Autore(nome=form.autore.data)
+            if current_user.is_authenticated:
+                u_mail = current_user.email
+            else:
+                u_mail = ''
+            u = models.Autore(nome=form.autore.data, email=u_mail)
             db.session.add(u)
             db.session.commit()
         s = models.Storia(body=form.storia.data, titolo=form.titolo.data, timestamp=datetime.datetime.now(), autore=u)

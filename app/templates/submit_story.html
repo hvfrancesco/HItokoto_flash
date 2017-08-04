@@ -10,7 +10,7 @@
     </div>
     <div class="form-group {% if form.autore.errors %} has-error {% endif %}">
          <label for="autore">* autore:</label>
-         <input type="text" class="form-control" id="autore" name="autore" value="{{ current_user.username }}" placeholder="il tuo nome">
+         <input type="text" class="form-control" id="autore" name="autore" {% if call_or_get(current_user.is_authenticated) %} value="{{ current_user.username }}" {% endif %}placeholder="il tuo nome">
          <p class="help-block">{{ form.autore.errors[0] }}</p>
     </div>
     <div class="form-group {% if form.titolo.errors %} has-error {% endif %}">

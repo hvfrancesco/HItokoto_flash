@@ -5,6 +5,7 @@ from flask_user import UserMixin
 class Autore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(64), index=True, unique=True)
+    email = db.Column(db.String(255), index=True)
     storie = db.relationship('Storia', backref='autore', lazy='dynamic')
 
     def __repr__(self):
