@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+      {% if call_or_get(current_user.is_authenticated) %}
+      <h1>Buongiorno {{ current_user.username }}!</h1>
+      {% else %}
       <h1>Buongiorno {{ user.nickname }}!</h1>
+      {% endif %}
       <div><p>Clicca <a href="storia">QUI</a> per inviare la tua storia</p></div>
 {% endblock %}

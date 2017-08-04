@@ -18,7 +18,7 @@
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4>Grazie per avere partecipato!</h4>
+        <h4></h4>
         <ul>
         {% for message in messages %}
             <li>{{ message }} </li>
@@ -28,9 +28,19 @@
       {% endif %}
     {% endwith %}
     </div>
-    <div id="logo" class="row" >
-    <img src="/static/img/logo.png" />
+      <div class="pull-right">
+            {% if call_or_get(current_user.is_authenticated) %}
+                <a href="{{ url_for('user.profile') }}">{{ current_user.username }}</a>
+                &nbsp; | &nbsp;
+                <a href="{{ url_for('user.logout') }}">Sign out</a>
+            {% else %}
+                <a href="{{ url_for('user.login') }}">Sign in</a>
+            {% endif %}
     </div>
+    <div id="logo" class="row" >
+    <a href="/"><img src="/static/img/logo.png" /></a>
+    </div>
+
     <div id="blocco" class="row">
     {% block content %}{% endblock %}
     </div>

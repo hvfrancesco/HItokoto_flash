@@ -1,5 +1,6 @@
 from flask import render_template, flash, redirect
 from app import app, db, models
+from flask_user import login_required
 from .forms import submitStory
 import datetime
 import os
@@ -15,6 +16,7 @@ def index():
     return render_template('index.html', title='Hitokoto Flash', user=user)
 
 @app.route('/storia', methods=['GET', 'POST'])
+@login_required
 def invia_storia():
     form = submitStory()
     if form.validate_on_submit():
