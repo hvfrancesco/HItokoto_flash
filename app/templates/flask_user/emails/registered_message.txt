@@ -1,15 +1,15 @@
 {% extends 'flask_user/emails/base_message.txt' %}
 
 {% block message %}
-Thank you for registering with {{ app_name }}.
+Grazie per esserti registrato su {{ app_name }}.
 
 {% if user_manager.enable_confirm_email -%}
-You will need to confirm your email next.
+Il prossimo passo è confermare il tuo indirizzo email.
 
-If you initiated this registration, please visit the link below:
+Per confermare l&#39;indirizzo email vai al seguente indirizzo:
     {{ confirm_email_link }}
 
-If you did not initiate this registration, you may safely ignore this email.
+Se non hai richiesto tu di essere registrato su {{ app_name }}, puoi semplicemente ignorare questo messaggio.
 
 {%- endif %}
 {% endblock %}
