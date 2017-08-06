@@ -139,31 +139,47 @@ class Controller(threading.Thread):
                             os._exit(0)
                             break
                         elif (event.key == pygame.K_p):
-                            self.worker.p.mostra_foglio()
-                            self.worker.messaggio = "Mostro il foglio del plotter virtuale" 
+                            self.mostra_foglio_virtuale()
                         elif (event.key == pygame.K_s):
-                            self.worker.p.numero_foglio += 1 # stampa il titolo su un nuovo foglio
-                            self.worker.p.stampa_titolo() # con un numero progressivo
-                            self.worker.messaggio = "Ho stampato il titolo su un nuovo foglio"
+                            self.stampa_titolo_tavola()
                         elif (event.key == pygame.K_b):
-                            try:
-                                os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
-                            except  OSError as e:
-                                if e.errno == os.errno.ENOENT:
-                                    pass
+                            self.produci_pdf()
                         elif (event.key == pygame.K_a):
-                            self.worker.auto_pdf = not self.worker.auto_pdf
-                            if self.worker.auto_pdf:
-                                self.worker.messaggio = "auto PDF abilitato"
-                            else:
-                                self.worker.messaggio = "auto PDF disabilitato"
+                            self.toggle_auto_pdf()
                         else:
                             time.sleep(0.1)
-                            self.condition = not self.condition
-                            if self.condition:
-                                self.worker.resume()
-                            else:
-                                self.worker.pause()
+                            self.pausa()
+    
+    def mostra_foglio_virtuale(self):
+        self.worker.p.mostra_foglio()
+        self.worker.messaggio = "Mostro il foglio del plotter virtuale" 
+    
+    def stampa_titolo_tavola(self):
+        self.worker.p.numero_foglio += 1 # stampa il titolo su un nuovo foglio
+        self.worker.p.stampa_titolo() # con un numero progressivo
+        self.worker.messaggio = "Ho stampato il titolo su un nuovo foglio"
+    
+    def produci_pdf(self):
+        try:
+            os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
+        except  OSError as e:
+            if e.errno == os.errno.ENOENT:
+                pass
+    
+    def toggle_auto_pdf(self):
+        self.worker.auto_pdf = not self.worker.auto_pdf
+        if self.worker.auto_pdf:
+            self.worker.messaggio = "auto PDF abilitato"
+        else:
+            self.worker.messaggio = "auto PDF disabilitato"
+    
+    
+    def pausa(self):
+        self.condition = not self.condition
+        if self.condition:
+            self.worker.resume()
+        else:
+            self.worker.pause()
 
 
     def resume(self):

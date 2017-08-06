@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+      <h1>Buongiorno!</h1>
+       <div id="form_controllo" class="col-md-7">
+  <form action="/comando" method="post" name="controllo">
+    <div class="form-group">
+         <label for="comando">comando:</label>
+         <input type="text" class="form-control" id="comando" name="comando" value="">
+    </div>
+       <div class="form-group">    
+      <button type="submit" class="btn btn-primary">invia</button>
+    </div>
+  </form>
+  </div>
+{% endblock %}

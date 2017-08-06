@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*- 
 
-from flask import Flask, request
+from flask import Flask, request, flash
 from flask_babel import Babel
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
@@ -88,8 +88,6 @@ admin.add_view(DbAdmin(models.Storia, db.session))
 admin.add_view(UserAdmin(models.User, db.session))
 admin.add_view(DbAdmin(models.Role, db.session))
 
-
-
 q = Queue.Queue() # si istanzia la coda che servirà a inserire le storie
 views.q = q # passiamo l'oggetto coda alle views importate
 # questo thread si dovrà occupare di prendere i messaggi dalla coda e inviarli al plotter
@@ -100,3 +98,5 @@ worker = Worker(q)
 controller = Controller(worker)
 worker.start() # chiama il metodo run() di worker
 controller.start() # chiama il metodo run() di controller
+
+views.c = controller

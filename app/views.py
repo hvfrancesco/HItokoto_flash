@@ -8,6 +8,7 @@ import os
 
 
 q = None
+c = None
 nick = 'autore'
 
 @app.route('/')
@@ -16,6 +17,30 @@ def index():
     user = {'nickname': nick}
     return render_template('index.html', title='Hitokoto Flash', user=user)
 
+@app.route('/controllo/<comando>')
+@roles_required('admin')
+def get(comando):
+    if (comando == 'pausa'):
+        c.pausa()
+        if c.condition:
+            flash("sto lavorando")
+        else:
+            flash("in pausa")
+        return redirect('/index')
+    elif (comando == 'titolo'):
+        c.stampa_titolo_tavola()
+        flash("titolo stampato sul nuovo foglio")
+        return redirect('/index')
+    elif (comando == 'autopdf'):
+        c.toggle_auto_pdf()
+        if c.worker.auto_pdf:
+            flash("auto PDF abilitato")
+        else:
+            flash("auto PDF disabilitato")
+        return redirect('/index')
+    else:
+        flash("comando "+comando+" sconosciuto")
+        return redirect('/index')
 
 @app.route('/storia', methods=['GET', 'POST'])
 @login_required
