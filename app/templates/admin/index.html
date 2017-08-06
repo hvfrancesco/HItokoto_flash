@@ -1,0 +1,18 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+   <div id="contenitore" class="container">
+      <div class="pull-right">
+            {% if call_or_get(current_user.is_authenticated) %}
+                <a href="{{ url_for('user.profile') }}">{{ current_user.username }}</a>
+                &nbsp; | &nbsp;
+                <a href="{{ url_for('user.logout') }}">Sign out</a>
+            {% else %}
+                <a href="{{ url_for('user.login') }}">Sign in</a>
+            {% endif %}
+        </div>
+    <div id="logo" class="row" >
+    <a href="/"><img src="/static/img/logo.png" /></a>
+    </div>
+   </div>
+{% endblock %}
