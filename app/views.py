@@ -38,6 +38,10 @@ def get(comando):
         else:
             flash("auto PDF disabilitato")
         return redirect('/index')
+    elif (comando == 'pdf'):
+        c.produci_pdf()
+        flash("prodotto un nuovo PDF")
+        return redirect('/index')
     else:
         flash("comando "+comando+" sconosciuto")
         return redirect('/index')

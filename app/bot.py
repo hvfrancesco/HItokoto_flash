@@ -159,13 +159,17 @@ class Controller(threading.Thread):
         self.worker.p.stampa_titolo() # con un numero progressivo
         self.worker.messaggio = "Ho stampato il titolo su un nuovo foglio"
     
-    def produci_pdf(self):
-        try:
-            os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
-        except  OSError as e:
-            if e.errno == os.errno.ENOENT:
-                pass
+    #def produci_pdf(self):
+    #    try:
+    #        os.system('scribus-trunk -g -ns -py scribus.py  --  libro_a5.sla')
+    #    except  OSError as e:
+    #        if e.errno == os.errno.ENOENT:
+    #            pass
     
+    def produci_pdf(self):
+        self.worker.scribus.resume()
+
+
     def toggle_auto_pdf(self):
         self.worker.auto_pdf = not self.worker.auto_pdf
         if self.worker.auto_pdf:
