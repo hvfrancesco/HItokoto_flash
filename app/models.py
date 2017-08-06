@@ -9,7 +9,7 @@ class Autore(db.Model):
     storie = db.relationship('Storia', backref='autore', lazy='dynamic')
 
     def __repr__(self):
-        return '<Autore %r>' % (self.nome)
+        return self.nome
 
 class Storia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,14 +19,14 @@ class Storia(db.Model):
     auth_id = db.Column(db.Integer, db.ForeignKey('autore.id'))
 
     def __repr__(self):
-        return '<Storia %r>' % (self.body)
+        return self.titolo
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
 
     def __repr__(self):
-        return '<Ruolo %r>' % (self.name)
+        return self.name
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,7 +48,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary='user_roles', backref='user', lazy='dynamic')
 
     def __repr__(self):
-        return '<User %r>' % (self.username)
+        return self.username
 
 class UserRoles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
