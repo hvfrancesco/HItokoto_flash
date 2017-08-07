@@ -188,7 +188,7 @@ def main(argv):
 
     scribus.saveDocAs("hitokoto_temp.sla")
 
-    nome_pdf = "libro_a5.pdf"
+    nome_pdf = "app/static/pdf/libro_a5.pdf"
     pdf = scribus.PDFfile()
     pdf.outdst = 1
     pdf.version = 15

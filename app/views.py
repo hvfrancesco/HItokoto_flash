@@ -11,6 +11,11 @@ q = None
 c = None
 nick = 'autore'
 
+
+def is_file(p):
+    return os.path.isfile(p)
+app.jinja_env.tests['file'] = is_file
+
 @app.route('/')
 @app.route('/index')
 def index():

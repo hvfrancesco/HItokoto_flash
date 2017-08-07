@@ -6,4 +6,22 @@
       <h1>Buongiorno {{ user.nickname }}!</h1>
       {% endif %}
       <div><p>Clicca <a href="storia">QUI</a> per inviare la tua storia</p></div>
+      <div><p><a href="http://www.hitokoto.xyz" target="_blank">HITOKOTO</a> &eacute; un'espressione giapponese che significa "una sola parola".</p>
+      <p>HITOKOTO &eacute; anche un esperimento collettivo di scrittura.</p>
+<p>&Eacute; attorno a una sola parola che ogni volta HITOKOTO vuole raccogliere dei piccoli testi, dei racconti,un pensiero volante.<br />
+HITOKOTO &eacute; esplorare paesaggi e parole, raccontandoli con la scrittura e vivendoli, leggendoli, in un luogo, in un istante collettivo.<br />
+Ad ogni nuovo assalto i racconti dei partecipanti compongono un piccolo libro, da rivelare e condividere in un luogo inaspettato della citt&agrave;,<br />
+in un momento speciale, irripetibile e fragile, quando in un atto di guerrilla culturale, ci daremo appuntamento per leggere le parole di tutti<br />
+e distribuire il frutto del lavoro collettivo tra chi ci vorr&agrave; accompagnare.</p>
+<p>HITOKOTO Flash &eacute; una versione istantanea di HITOKOTO che si svolge in tempo reale, con l'uso di un vecchio plotter a penna che scrive le storie<br />
+inviate al volo dai partecipanti.</p>
+</div>      
+<div id="footer" class="row">
+    {% if 'app/static/pdf/libro_a5.pdf' is file %}
+    <div id="libro_pdf" class="col-md-7">
+    Qui puoi scaricare un piccolo <a href="static/pdf/libro_a5.pdf" target="_blank">libro in formato PDF</a> composto con le storie scritte fino a questo momento,<br />
+    ogni volta che una nuova storia viene aggiunta da qualcuno, il libro viene prodotto automaticamente.
+    </div>
+    {% endif %}
+  </div>
 {% endblock %}

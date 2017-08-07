@@ -7,7 +7,10 @@ from flask_mail import Mail
 from flask_user import login_required, roles_required, UserManager, UserMixin, SQLAlchemyAdapter, passwords
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from wtforms.fields import PasswordField
+from flask_admin.contrib.fileadmin import FileAdmin
+import os.path as op
+from wtforms.fields import PasswordField, TextAreaField
+from wtforms.widgets import TextArea
 from flask_user import current_user
 import time
 import Queue
@@ -42,8 +45,25 @@ manager.create_api(models.Storia, methods=['GET'], results_per_page=0)
 db_adapter = SQLAlchemyAdapter(db, models.User)
 user_manager = UserManager(db_adapter, app)
 
+# campi per admin con uso di ckeditor
+
+class CKTextAreaWidget(TextArea):
+    def __call__(self, field, **kwargs):
+        if kwargs.get('class'):
+            kwargs['class'] += ' ckeditor'
+        else:
+            kwargs.setdefault('class', 'ckeditor')
+        return super(CKTextAreaWidget, self).__call__(field, **kwargs)
+
+class CKTextAreaField(TextAreaField):
+    widget = CKTextAreaWidget()
+
+
+
 # Customized User model for SQL-Admin
 class UserAdmin(ModelView):
+    create_modal = True
+    edit_modal = True
     # Don't display the password on the list of Users
     column_exclude_list = ('password',)
     # Don't include the standard password field when creating or editing a User (but see below)
@@ -75,6 +95,11 @@ class UserAdmin(ModelView):
 
 # Customized Role model for SQL-Admin
 class DbAdmin(ModelView):
+    #extra_js = ['/static/js/ckeditor/ckeditor.js']
+    #form_overrides = {'body' : CKTextAreaField}
+    form_overrides = {'body' : TextAreaField}
+    #create_modal = True
+    #edit_modal = True
     # Prevent administration of tables unless the currently logged-in user has the "admin" role
     def is_accessible(self):
         return current_user.has_role('admin')
@@ -87,6 +112,9 @@ admin.add_view(DbAdmin(models.Autore, db.session))
 admin.add_view(DbAdmin(models.Storia, db.session))
 admin.add_view(UserAdmin(models.User, db.session))
 admin.add_view(DbAdmin(models.Role, db.session))
+# amministrazione dei files statici
+path_statico = op.join(op.dirname(__file__), 'static')
+#admin.add_view(FileAdmin(path_statico, '/static/', name='Files Statici')) #disabilitato nell'attesa di scoprire come controllare l'accesso
 
 q = Queue.Queue() # si istanzia la coda che servirà a inserire le storie
 views.q = q # passiamo l'oggetto coda alle views importate
