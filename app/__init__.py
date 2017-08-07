@@ -110,8 +110,8 @@ admin = Admin(app, name='HITOKOTO Flash', template_mode='bootstrap3')
 #admin.add_view(ModelView(models.User, db.session))
 admin.add_view(DbAdmin(models.Autore, db.session))
 admin.add_view(DbAdmin(models.Storia, db.session))
-admin.add_view(UserAdmin(models.User, db.session))
-admin.add_view(DbAdmin(models.Role, db.session))
+admin.add_view(UserAdmin(models.User, db.session, name="Utenti"))
+admin.add_view(DbAdmin(models.Role, db.session, name="Ruoli"))
 # amministrazione dei files statici
 path_statico = op.join(op.dirname(__file__), 'static')
 #admin.add_view(FileAdmin(path_statico, '/static/', name='Files Statici')) #disabilitato nell'attesa di scoprire come controllare l'accesso
