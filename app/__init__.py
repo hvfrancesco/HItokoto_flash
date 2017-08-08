@@ -73,7 +73,10 @@ class UserAdmin(ModelView):
     column_auto_select_related = True
  # Prevent administration of Users unless the currently logged-in user has the "admin" role
     def is_accessible(self):
-        return current_user.has_role('admin')
+        try:
+            return current_user.has_role('admin')
+        except:
+            return False
     # On the form for creating or editing a User, don't display a field corresponding to the model's password field.
     # There are two reasons for this. First, we want to encrypt the password before storing in the database. Second,
     # we want to use a password field (with the input masked) rather than a regular text field.
@@ -103,12 +106,18 @@ class DbAdmin(ModelView):
     #edit_modal = True
     # Prevent administration of tables unless the currently logged-in user has the "admin" role
     def is_accessible(self):
-        return current_user.has_role('admin')
+        try:
+            return current_user.has_role('admin')
+        except:
+            return False
 
 # classe custom per fare l'override del controllo di accessibilità su FileAdmin
 class CustomFileAdmin(FileAdmin):
     def is_accessible(self):
-        return current_user.has_role('admin')
+        try:
+            return current_user.has_role('admin')
+        except:
+            return False
 
 # si istanzia l'interfaccia amministrativa e si aggiungono le relative view
 admin = Admin(app, name='HITOKOTO Flash', template_mode='bootstrap3')
