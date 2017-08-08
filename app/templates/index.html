@@ -19,7 +19,7 @@ con l'uso di un vecchio plotter a penna che scrive al volo le storie inviate dai
 <div id="footer" class="row">
     {% if 'app/static/pdf/libro_a5.pdf' is file %}
     <div id="libro_pdf" class="col-md-7">
-    Qui puoi scaricare un piccolo <a href="static/pdf/libro_a5.pdf" target="_blank">libro in formato PDF</a> composto con le storie scritte fino a questo momento,<br />
+    Qui puoi scaricare un piccolo <a href="{{ url_for('static', filename='pdf/libro_a5.pdf') }}" target="_blank">libro in formato PDF</a> composto con le storie scritte fino a questo momento,<br />
     ogni volta che una nuova storia viene aggiunta da qualcuno, il libro viene prodotto automaticamente.
     </div>
     {% endif %}
