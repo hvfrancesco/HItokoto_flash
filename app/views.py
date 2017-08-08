@@ -11,17 +11,20 @@ q = None
 c = None
 nick = 'autore'
 
-
+# test per il controllo di esistenza di un file dato il path
+# viene aggiunto al dizionario del template jinja
 def is_file(p):
     return os.path.isfile(p)
 app.jinja_env.tests['file'] = is_file
 
+#route principale
 @app.route('/')
 @app.route('/index')
 def index():
     user = {'nickname': nick}
     return render_template('index.html', title='Hitokoto Flash', user=user)
 
+# API dei poveri per il controllo
 @app.route('/controllo/<comando>')
 @roles_required('admin')
 def get(comando):
@@ -51,6 +54,7 @@ def get(comando):
         flash("comando "+comando+" sconosciuto")
         return redirect('/index')
 
+# pagina con modulo per invio storia
 @app.route('/storia', methods=['GET', 'POST'])
 @login_required
 def invia_storia():

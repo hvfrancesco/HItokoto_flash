@@ -36,17 +36,19 @@ mail = Mail(app)
 
 
 from app import views, models
+
+# Si istanzia l'APIManager di FLask-Restless per l'API di accesso al database
 manager = flask_restless.APIManager(app, flask_sqlalchemy_db=db)
 # Create API endpoints, which will be available at /api/<tablename> by
 # default. Allowed HTTP methods can be specified as well.
 manager.create_api(models.Autore, methods=['GET', 'POST', 'DELETE'], results_per_page=0)
 manager.create_api(models.Storia, methods=['GET'], results_per_page=0)
 
-db_adapter = SQLAlchemyAdapter(db, models.User)
+db_adapter = SQLAlchemyAdapter(db, models.User) # necessario per UserManager
 user_manager = UserManager(db_adapter, app)
 
-# campi per admin con uso di ckeditor
 
+# campi per admin con uso di ckeditor, per ora disabilitato
 class CKTextAreaWidget(TextArea):
     def __call__(self, field, **kwargs):
         if kwargs.get('class'):
@@ -59,8 +61,7 @@ class CKTextAreaField(TextAreaField):
     widget = CKTextAreaWidget()
 
 
-
-# Customized User model for SQL-Admin
+# CLasse custom per il modello User per SQL-Admin
 class UserAdmin(ModelView):
     create_modal = True
     edit_modal = True
@@ -93,7 +94,7 @@ class UserAdmin(ModelView):
             model.password = passwords.hash_password(user_manager, model.password2)
 
 
-# Customized Role model for SQL-Admin
+# Classe custom generica per SQL-Admin
 class DbAdmin(ModelView):
     #extra_js = ['/static/js/ckeditor/ckeditor.js']
     #form_overrides = {'body' : CKTextAreaField}
@@ -104,11 +105,12 @@ class DbAdmin(ModelView):
     def is_accessible(self):
         return current_user.has_role('admin')
 
+# classe custom per fare l'override del controllo di accessibilità su FileAdmin
 class CustomFileAdmin(FileAdmin):
     def is_accessible(self):
         return current_user.has_role('admin')
 
-
+# si istanzia l'interfaccia amministrativa e si aggiungono le relative view
 admin = Admin(app, name='HITOKOTO Flash', template_mode='bootstrap3')
 #admin.add_view(ModelView(models.User, db.session))
 admin.add_view(DbAdmin(models.Autore, db.session))
