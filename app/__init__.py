@@ -104,6 +104,9 @@ class DbAdmin(ModelView):
     def is_accessible(self):
         return current_user.has_role('admin')
 
+class CustomFileAdmin(FileAdmin):
+    def is_accessible(self):
+        return current_user.has_role('admin')
 
 
 admin = Admin(app, name='HITOKOTO Flash', template_mode='bootstrap3')
@@ -114,7 +117,7 @@ admin.add_view(UserAdmin(models.User, db.session, name="Utenti"))
 admin.add_view(DbAdmin(models.Role, db.session, name="Ruoli"))
 # amministrazione dei files statici
 path_statico = op.join(op.dirname(__file__), 'static')
-#admin.add_view(FileAdmin(path_statico, '/static/', name='Files Statici')) #disabilitato nell'attesa di scoprire come controllare l'accesso
+admin.add_view(CustomFileAdmin(path_statico, '/static/', name='Files Statici'))
 
 q = Queue.Queue() # si istanzia la coda che servirà a inserire le storie
 views.q = q # passiamo l'oggetto coda alle views importate
