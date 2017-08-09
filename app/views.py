@@ -9,7 +9,15 @@ import os
 
 q = None
 c = None
-nick = 'autore'
+nick = 'futuro autore'
+
+@app.context_processor
+def inject_now():
+    return {'now' : datetime.date.today()}
+
+@app.context_processor
+def inject_months():
+    return {'mesi' : ['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre']}
 
 # test per il controllo di esistenza di un file dato il path
 # viene aggiunto al dizionario del template jinja
